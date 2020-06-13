@@ -514,4 +514,23 @@ let ``Test builder's validateRequired method`` () =
         ],
         vCommunication { Size = 4; Message = None })
 
-        
+[<Fact>]
+let ``Test builder's validateOptional method`` () =
+    let vCommunication = validator<FT.Communication>() {
+        validateOptional "Message" (fun communication -> communication.Message) [
+            FR.stringHasMaxLengthOf 10
+        ]
+    }
+    Assert.Equal<T.Validation>(Ok (), vCommunication { Size = 4; Message = Some "one two" })
+    Assert.Equal<T.Validation>(
+        Error <| Set [
+            { 
+                T.Message = "Must has max length of '10'"
+                T.Property = "Message"
+                T.Code = "StringHasMaxLengthOf" 
+            }
+        ],
+        vCommunication { Size = 4; Message = Some "one two three" })
+    Assert.Equal<T.Validation>(Ok (), vCommunication { Size = 4; Message = None })
+
+    
