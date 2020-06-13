@@ -62,3 +62,11 @@ let listIsNotEmpty (property: string) : list<'a> -> T.Validation =
     }
     withFunction invalid (List.isEmpty >> not)
 
+let doubleIsGreaterThan (value: double) (property: string) : double -> T.Validation =
+    let invalid : T.Invalid = {
+        Message = sprintf "Must be greater than '%O'" value
+        Property = property
+        Code = "DoubleIsGreaterThan"
+    }
+    withFunction invalid (fun (target: double) -> target > value)
+
