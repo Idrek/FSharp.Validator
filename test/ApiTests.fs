@@ -51,3 +51,40 @@ let ``Test withValidator function`` () =
             "Country"
             "japan")
 
+[<Fact>]
+let ``Test withValidatorWhen function`` () =
+    let invalid : T.Invalid = {
+        Message = "Message 1"
+        Property = "Property1"
+        Code = "Code1"
+    }
+
+    Assert.Equal<T.Validation>(
+        Ok (),
+        withValidatorWhen  
+            (fun (s: string) -> s.StartsWith "ja")
+            (fun (s: string) -> if s.Length > 6 then Ok () else Error <| Set [invalid])
+            "Country"
+            "jamaica")
+
+    let error : T.Invalid = {
+        Message = "Message 1"
+        Property = "Country.Property1"
+        Code = "Code1"
+    }
+    Assert.Equal<T.Validation>(
+        Error <| Set [error],
+        withValidatorWhen 
+            (fun (s: string) -> s.StartsWith "ja")
+            (fun (s: string) -> if s.Length > 6 then Ok () else Error <| Set [invalid])
+            "Country"
+            "japan")
+
+    Assert.Equal<T.Validation>(
+        Ok (),
+        withValidatorWhen  
+            (fun (s: string) -> s.StartsWith "ja")
+            (fun (s: string) -> if s.Length > 6 then Ok () else Error <| Set [invalid])
+            "Country"
+            "spain")
+
