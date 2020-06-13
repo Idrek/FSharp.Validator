@@ -382,4 +382,91 @@ let ``Test builder's eachWithValidator function`` () =
         ],
         vUser user2)
 
+[<Fact>]
+let ``Test builder's validation functions for Order type`` () =
+    let validOrder : FT.Order = {
+        Title = "Cans of stuff"
+        Customer = { Age = 45 }
+        Cost = 50.0
+        Items = [
+            { Name = "Baked Beans"; Quantity = 10 }
+            { Name = "Kidney Beans"; Quantity = 2 }
+        ]
+    }
+
+    let invalidOrder : FT.Order = {
+        Title = String.Empty
+        Customer = { Age = 16 }
+        Cost = -100.0
+        Items = [
+            { Name = "Baked Beans"; Quantity = -2 }
+            { Name = ""; Quantity = 5 }
+        ]
+    }
+
+    let vCustomer = validator<FT.Customer>() {
+        validateWith "Age" (fun customer -> customer.Age) [
+            FR.intIsGreaterOrEqualTo 18
+            FR.intIsLessOrEqualTo 65
+        ]
+    }
+
+    let vOrderItem = validator<FT.OrderItem>() {
+        validateWith "Name" (fun orderItem -> orderItem.Name) [
+            FR.stringIsNotEmpty
+            FR.stringHasMaxLengthOf 128
+        ]
+        validateWith "Quantity" (fun r -> r.Quantity) [
+            FR.intIsGreaterOrEqualTo  1
+        ]
+    }
+    
+    let vOrder = validator<FT.Order>() {
+        validateWith "Customer.Age" (fun order -> order.Customer.Age) [
+            FR.intIsGreaterOrEqualTo 18
+        ]
+        validateWith "Items" (fun order -> order.Items) [
+            FR.listIsNotEmpty
+            eachWithValidator vOrderItem
+        ]
+        validateWith "Cost" (fun order -> order.Cost) [
+            FR.doubleIsGreaterThan  0.0
+        ]
+        validateWith "Title" (fun order -> order.Title) [
+            FR.stringIsNotEmpty
+            FR.stringHasMaxLengthOf 128
+        ]
+    }
+
+    Assert.Equal<T.Validation>(Ok (), vOrder validOrder)
+    Assert.Equal<T.Validation>(
+        Error <| Set [
+            { 
+                T.Message = "Must not be empty"
+                T.Property = "Title"
+                T.Code = "StringIsNotEmpty" 
+            }
+            { 
+                T.Message = "Must be greater or equal to '1'"
+                T.Property = "Items.[0].Quantity"
+                T.Code = "IntIsGreaterOrEqualTo" 
+            }
+            { 
+                T.Message = "Must be greater than '0'"
+                T.Property = "Cost"
+                T.Code = "DoubleIsGreaterThan" 
+            }
+            { 
+                T.Message = "Must not be empty"
+                T.Property = "Items.[1].Name"
+                T.Code = "StringIsNotEmpty" 
+            }
+            { 
+                T.Message = "Must be greater or equal to '18'"
+                T.Property = "Customer.Age"
+                T.Code = "IntIsGreaterOrEqualTo" 
+            }
+        ],
+        vOrder invalidOrder)
+
         
