@@ -597,4 +597,20 @@ let ``Test tuple validation`` () =
         }],
         vTuple (14, "one", false))
 
+[<Fact>]
+let ``Test simple union validation`` () =
+    let vColor = validator<FT.Color>() {
+        validateBasic "Color" [
+            FR.isMyFavouriteColor FT.Yellow
+        ]
+    }
+    Assert.Equal<T.Validation>(Ok (), vColor FT.Yellow)
+    Assert.Equal<T.Validation>(
+        Error <| Set [{ 
+            T.Message = "Not my favourite color"
+            T.Property = "Color"
+            T.Code = "IsMyFavouriteColor" 
+        }],
+        vColor FT.Black)
+
         
