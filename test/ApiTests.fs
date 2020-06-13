@@ -613,4 +613,31 @@ let ``Test simple union validation`` () =
         }],
         vColor FT.Black)
 
+[<Fact>]
+let ``Test record validation`` () =
+    let vAddress = validator<FT.Address>() {
+        validateWith "Street" (fun u -> u.Street) [
+            FR.stringStartsWith "Bo"
+            FR.stringHasMaxLengthOf 20
+        ]
+        validateWith "Number" (fun u -> u.Number) [
+            FR.intIsGreaterOrEqualTo 3
+        ]
+    }
+    Assert.Equal<T.Validation>(Ok (), vAddress { Street = "Bourbon Street"; Number = 4 })
+    Assert.Equal<T.Validation>(
+        Error <| Set [
+            { 
+                T.Message = "Must be greater or equal to '3'"
+                T.Property = "Number"
+                T.Code = "IntIsGreaterOrEqualTo" 
+            }
+            { 
+                T.Message = "Must start with 'Bo'"
+                T.Property = "Street"
+                T.Code = "StringStartsWith" 
+            }
+        ],
+        vAddress { Street = "Abbey Street"; Number = 2 })
+
         
