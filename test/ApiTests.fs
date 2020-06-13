@@ -581,4 +581,20 @@ let ``Test builder's validateUnion with multi-branch union`` () =
         }],
         vRecipe { FT.Value = FT.Fruit String.Empty })
 
+[<Fact>]
+let ``Test tuple validation`` () =
+    let vTuple = validator<int * string * bool>() {
+        validateBasic "Triple" [
+            FR.isMyTriple (14, "one", true)
+        ]
+    }
+    Assert.Equal<T.Validation>(Ok (), vTuple (14, "one", true))
+    Assert.Equal<T.Validation>(
+        Error <| Set [{ 
+            T.Message = "Not my triple"
+            T.Property = "Triple"
+            T.Code = "IsMyTriple" 
+        }],
+        vTuple (14, "one", false))
+
         
