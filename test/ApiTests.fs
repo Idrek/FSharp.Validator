@@ -550,4 +550,35 @@ let ``Test builder's validateUnion with single-branch union`` () =
         }],
         vJob { FT.Id = FT.JobId "Some very very large text" })
 
+[<Fact>]
+let ``Test builder's validateUnion with multi-branch union`` () =
+    let vRecipe = validator<FT.Recipe>() {
+        validateUnion
+            "Value.Ingredient.Juice"
+            (fun recipe -> match recipe.Value with | FT.Juice j -> Some j | _ -> None) [
+                FR.doubleIsGreaterThan 3.2
+            ]
+        validateUnion
+            "Value.Ingredient.Fruit"
+            (fun recipe -> match recipe.Value with | FT.Fruit f -> Some f | _ -> None) [
+                FR.stringIsNotEmpty
+            ]
+    }
+    Assert.Equal<T.Validation>(Ok (), vRecipe { FT.Value = FT.Juice 4.1 })
+    Assert.Equal<T.Validation>(
+        Error <| Set [{ 
+            T.Message = "Must be greater than '3,2'"
+            T.Property = "Value.Ingredient.Juice"
+            T.Code = "DoubleIsGreaterThan" 
+        }],
+        vRecipe { FT.Value = FT.Juice 3.0 })
+    Assert.Equal<T.Validation>(Ok (), vRecipe { FT.Value = FT.Fruit "Apple" })
+    Assert.Equal<T.Validation>(
+        Error <| Set [{ 
+            T.Message = "Must not be empty"
+            T.Property = "Value.Ingredient.Fruit"
+            T.Code = "StringIsNotEmpty" 
+        }],
+        vRecipe { FT.Value = FT.Fruit String.Empty })
+
         
