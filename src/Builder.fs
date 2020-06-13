@@ -83,6 +83,16 @@ type ValidatorBuilder<'t> () =
                     | None -> Ok ()
                     | Some p -> rule property p))
         } :: state
+
+    [<CustomOperation("validateUnion")>]
+    member this.ValidateUnion 
+            (
+                state: list<T.State<'t>>,
+                property: string,
+                getProperty: 't -> Option<'p>,
+                rules: list<string -> 'p -> T.Validation>
+            ) : list<T.State<'t>> =
+        this.ValidateOptional(state, property, getProperty, rules)
         
 
  
