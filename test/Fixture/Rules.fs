@@ -38,3 +38,11 @@ let intIsLessOrEqualTo (value: int) (property: string) : int -> T.Validation =
     }
     withFunction invalid (fun (target: int) -> target <= value)
 
+let stringIsNotEmpty (property: string) : string -> T.Validation =
+    let invalid : T.Invalid = {
+        Message = "Must not be empty"
+        Property = property
+        Code = "StringIsNotEmpty"
+    }
+    withFunction invalid (String.IsNullOrWhiteSpace >> not)
+
