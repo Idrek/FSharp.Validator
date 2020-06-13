@@ -1,7 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Authors>Idrek</Authors>
+    <Description>Validate .NET and F# data types</Description>
+    <PackageId>FSharp.Validator</PackageId>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Idrek/FSharp.Validator</PackageProjectUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageTags>dotnetcore; fsharp; validation</PackageTags>
+    <PackageVersion>0.0.1</PackageVersion>
+    <RepositoryBranch>master</RepositoryBranch>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/Idrek/FSharp.Validator</RepositoryUrl>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Title>FSharp.Validator</Title>
   </PropertyGroup>
 
   <ItemGroup>
