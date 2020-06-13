@@ -27,6 +27,8 @@ This library doesn't include any rules. You can create your own `Rules` module w
 
 Here are some examples (and even more in source code tests):
 
+- Rules.fs
+
 ```
 module Rules
 
@@ -67,6 +69,7 @@ let isSuperset (value: Set<'a>) (property: string) : Set<'a> -> T.Validation =
     }
     V.withFunction failure (fun (target: Set<'a>) -> Set.isSuperset target value)
 ```
+- Program.fs
 
 ```
 module Program
