@@ -14,3 +14,11 @@ let stringStartsWith (value: string) (property: string) : string -> T.Validation
     }
     withFunction invalid (fun (target: string) -> target.StartsWith value)
 
+let intIsGreaterThan (value: int) (property: string) : int -> T.Validation =
+    let invalid : T.Invalid = {
+        Message = sprintf "Must be greater than '%O'" value
+        Property = property
+        Code = "IntIsGreaterThan" 
+    }
+    withFunction invalid (fun (target: int) -> target > value)
+
