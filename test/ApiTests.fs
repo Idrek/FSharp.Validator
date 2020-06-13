@@ -469,4 +469,22 @@ let ``Test builder's validation functions for Order type`` () =
         ],
         vOrder invalidOrder)
 
-        
+[<Fact>]
+let ``Test builder's validation functions for TrafficLightColor type`` () =
+    let vLight = validator<FT.TrafficLight>() {
+        validateWith "Color" (fun trafficLight -> trafficLight.Color) [
+            FR.isColor FT.Green
+        ]
+    }
+    Assert.Equal<T.Validation>(
+        Error <| Set [
+            { 
+                T.Message = "Color is not 'Green'"
+                T.Property = "Color"
+                T.Code = "IsColor" 
+            }
+        ],
+        vLight { Color = FT.Amber })
+    Assert.Equal<T.Validation>(Ok (), vLight { Color = FT.Green })
+
+    
