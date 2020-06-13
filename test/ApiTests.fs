@@ -533,4 +533,21 @@ let ``Test builder's validateOptional method`` () =
         vCommunication { Size = 4; Message = Some "one two three" })
     Assert.Equal<T.Validation>(Ok (), vCommunication { Size = 4; Message = None })
 
-    
+[<Fact>]
+let ``Test builder's validateUnion with single-branch union`` () =
+    let vJob = validator<FT.Job>() {
+        validateUnion "Id.JobId" (fun job -> let (FT.JobId id) = job.Id in Some id) [
+            FR.stringIsNotEmpty
+            FR.stringHasMaxLengthOf 16
+        ]
+    }
+    Assert.Equal<T.Validation>(Ok (), vJob { FT.Id = FT.JobId "123"})
+    Assert.Equal<T.Validation>(
+        Error <| Set [{ 
+            T.Message = "Must has max length of '16'"
+            T.Property = "Id.JobId"
+            T.Code = "StringHasMaxLengthOf" 
+        }],
+        vJob { FT.Id = FT.JobId "Some very very large text" })
+
+        
