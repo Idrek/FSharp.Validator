@@ -23,3 +23,31 @@ let ``Test withFunction function`` () =
         Error <| Set [invalid],
         withFunction invalid (fun (s: string) -> s.Length > 6) "japan")
 
+[<Fact>]
+let ``Test withValidator function`` () =
+    let invalid : T.Invalid = {
+        Message = "Message 1"
+        Property = "Property1"
+        Code = "Code1"
+    }
+
+    Assert.Equal<T.Validation>(
+        Ok (),
+        withValidator  
+            (fun (s: string) -> if s.Length > 6 then Ok () else Error <| Set [invalid]) 
+            "Country"
+            "jamaica")
+            
+
+    let nestedInvalid : T.Invalid = {
+        Message = "Message 1"
+        Property = "Country.Property1"
+        Code = "Code1"
+    }
+    Assert.Equal<T.Validation>(
+        Error <| Set [nestedInvalid],
+        withValidator 
+            (fun (s: string) -> if s.Length > 6 then Ok () else Error <| Set [invalid])
+            "Country"
+            "japan")
+
