@@ -293,4 +293,61 @@ let ``Test builder's validateWhen function`` () =
     }
     Assert.Equal<T.Validation>(Ok (), vUser user)
 
+[<Fact>]
+let ``Test builder's validateWith + withValidatorWhen function`` () =
+    let vAddressHigh = validator<FT.Address>() {
+        validateWith "Street" (fun address -> address.Street) [
+            FR.stringStartsWith "Castle"
+        ]
+    }
+    let vAddressLow = validator<FT.Address>() {
+        validateWith "Street" (fun address -> address.Street) [
+            FR.stringStartsWith "Lane"
+        ]
+    }
+    let vUser = validator<FT.User1>() {
+        validateWith "Address" (fun user -> user.Address) [
+            (withValidatorWhen (fun address -> address.Number > 10) vAddressHigh)
+            (withValidatorWhen (fun address -> address.Number <= 10) vAddressLow)
+        ]
+    }
+
+    let user1 : FT.User1 = {
+        Name = "John"
+        Age = 32
+        Address = { Street = "Castle Lane"; Number = 54 }
+    }
+    Assert.Equal(Ok (), vUser user1)
+
+    let user2 : FT.User1 = {
+        Name = "John"
+        Age = 32
+        Address = { Street = "Lane Castle"; Number = 54 }
+    }
+    let error : T.Validation = Error <| Set [{
+        T.Message = "Must start with 'Castle'"
+        T.Property = "Address.Street"
+        T.Code = "StringStartsWith"
+    }]
+    Assert.Equal<T.Validation>(error, vUser user2)
+
+    let user3 : FT.User1 = {
+        Name = "John"
+        Age = 32
+        Address = { Street = "Lane Castle"; Number = 6 }
+    }
+    Assert.Equal(Ok (), vUser user3)
+
+    let user4 : FT.User1 = {
+        Name = "John"
+        Age = 32
+        Address = { Street = "Castle Lane"; Number = 6 }
+    }
+    let error : T.Validation = Error <| Set [{
+        T.Message = "Must start with 'Lane'"
+        T.Property = "Address.Street"
+        T.Code = "StringStartsWith"
+    }]
+    Assert.Equal(error, vUser user4)
+
     
