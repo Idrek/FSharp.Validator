@@ -79,3 +79,12 @@ let isColor (value: FT.TrafficLightColor) (property: string) : FT.TrafficLightCo
     }
     withFunction invalid (fun (target: FT.TrafficLightColor) -> target = value)
 
+let isMyTriple (i: int, s: string, b: bool) (property: string) : int * string * bool -> T.Validation =
+    let invalid : T.Invalid = {
+        Message = "Not my triple"
+        Property = property
+        Code = "IsMyTriple"
+    }
+    withFunction invalid (fun (i2, s2, b2) -> i = i2 && s = s2 && b = b2)
+
+    
