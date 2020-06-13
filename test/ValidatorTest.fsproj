@@ -11,6 +11,7 @@
     <Compile Include="Tests.fs" />
     <Compile Include="Fixture/Types.fs" />
     <Compile Include="Fixture/Rules.fs" />
+    <Compile Include="ApiTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
