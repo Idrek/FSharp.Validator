@@ -7,6 +7,7 @@ module FT = ValidatorTest.Fixture.Types
 module FR = ValidatorTest.Fixture.Rules
 module T = Validator.Types
 
+type Int32 = System.Int32
 type String = System.String
 
 [<Fact>]
@@ -241,4 +242,20 @@ let ``Test builder's validateWith + withValidator function`` () =
         T.Code = "StringStartsWith"
     }]
     Assert.Equal<T.Validation>(error, vUser user)
+
+[<Fact>]
+let ``Test builder's validateBasic member`` () =
+    let vNumber = validator<Int32>() {
+        validateBasic "Int32" [
+            FR.intIsGreaterThan 3
+        ]
+    }
+    Assert.Equal(Ok (), vNumber 6)
+    
+    let error : T.Validation = Error <| Set [{
+        T.Message = "Must be greater than '3'"
+        T.Property = "Int32"
+        T.Code = "IntIsGreaterThan"
+    }]
+    Assert.Equal(error, vNumber 3)
 
