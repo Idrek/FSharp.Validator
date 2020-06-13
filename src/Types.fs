@@ -6,3 +6,5 @@ type Invalid = {
     Code: string
 }
 
+type Validation = Result<unit, Set<Invalid>>
+
