@@ -38,3 +38,20 @@ let eachWithValidator
     | 0 -> Ok ()
     | _ -> Error invalids
 
+let withValidatorWhen  
+        (predicate: 't -> bool)
+        (validate: 't -> T.Validation)
+        (property: string)
+        (elem: 't) 
+        : T.Validation =
+    if predicate elem
+    then 
+        match validate elem with
+        | Ok () -> Ok ()
+        | Error invalids -> 
+            invalids 
+            |> Set.map (fun invalid -> 
+                { invalid with Property = sprintf "%s.%s" property invalid.Property })
+            |> Error
+    else Ok ()
+
