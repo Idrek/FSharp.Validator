@@ -30,6 +30,20 @@ type ValidatorBuilder<'t> () =
             Predicate = fun _ -> true
             Rules = List.map (fun rule -> rule property) rules
         } :: state
+
+    [<CustomOperation("validateWhen")>]
+    member this.ValidateWhen
+            (
+                state: list<T.State<'t>>,
+                predicate: 't -> bool,
+                property: string,
+                getProperty: 't -> 'p,
+                rules: list<string -> 'p -> T.Validation>
+            ) : list<T.State<'t>> =
+        {
+            Predicate = predicate
+            Rules = List.map (fun rule -> getProperty >> (rule property)) rules
+        } :: state
         
 
  
