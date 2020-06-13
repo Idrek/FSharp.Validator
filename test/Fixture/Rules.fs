@@ -46,3 +46,11 @@ let stringIsNotEmpty (property: string) : string -> T.Validation =
     }
     withFunction invalid (String.IsNullOrWhiteSpace >> not)
 
+let stringHasMaxLengthOf (value: int) (property: string) : string -> T.Validation =
+    let invalid : T.Invalid = {
+        Message = sprintf "Must has max length of '%O'" value
+        Property = property
+        Code = "StringHasMaxLengthOf"
+    }
+    withFunction invalid (fun (target: string) -> target.Length <= value)
+
