@@ -259,3 +259,38 @@ let ``Test builder's validateBasic member`` () =
     }]
     Assert.Equal(error, vNumber 3)
 
+[<Fact>]
+let ``Test builder's validateWhen function`` () =
+    let vUser = validator<FT.User1>() {
+        validateWhen (fun u -> u.Age >= 18) "Name" (fun u -> u.Name) [
+            FR.stringStartsWith "Jo"
+        ]
+    }
+
+    let user : FT.User1 = {
+        Name = "John"
+        Age = 32
+        Address = { Street = "Castle Lane"; Number = 54 }
+    }
+    Assert.Equal<T.Validation>(Ok (), vUser user)
+
+    let user : FT.User1 = {
+        Name = "Peter"
+        Age = 32
+        Address = { Street = "Castle Lane"; Number = 54 }
+    }
+    let error : T.Validation = Error <| Set [{
+        T.Message = "Must start with 'Jo'"
+        T.Property = "Name"
+        T.Code = "StringStartsWith"
+    }]
+    Assert.Equal<T.Validation>(error, vUser user)
+
+    let user : FT.User1 = {
+        Name = "John"
+        Age = 15
+        Address = { Street = "Castle Lane"; Number = 54 }
+    }
+    Assert.Equal<T.Validation>(Ok (), vUser user)
+
+    
