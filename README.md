@@ -12,7 +12,7 @@ $ dotnet pack src/Validator.fsproj
 $ mkdir /tmp/nuget
 $ nuget add src/bin/Debug/FSharp.Validator.0.0.1.nupkg -Source $_
 $ ## Create new `Demo` project and add the local installed library.
-$ dotnet new console --language F# --name Demo && cd $_
+$ cd /tmp && dotnet new console --language F# --name Demo && cd $_
 $ dotnet add Demo.fsproj package FSharp.Validator --source /tmp/nuget/ --version 0.0.1
 ```
 
