@@ -350,4 +350,36 @@ let ``Test builder's validateWith + withValidatorWhen function`` () =
     }]
     Assert.Equal(error, vUser user4)
 
-    
+[<Fact>]
+let ``Test builder's eachWithValidator function`` () =
+    let vNumber = validator<Int32>() {
+        validateBasic "Int32" [
+            FR.intIsGreaterThan 3
+        ]
+    }
+    let vUser = validator<FT.User2>() {
+        validateWith "FavouriteNumbers" (fun user -> user.FavouriteNumbers) [
+            (eachWithValidator vNumber)
+        ]
+    }
+
+    let user1 : FT.User2 = { Name = "John"; FavouriteNumbers = [6; 4; 12; 20; 7] }
+    Assert.Equal(Ok (), vUser user1)
+
+    let user2 : FT.User2 = { Name = "John"; FavouriteNumbers = [6; 2; 12; 20; 1] }
+    Assert.Equal(
+        Error <| Set [
+            { 
+                T.Message = "Must be greater than '3'"
+                T.Property = "FavouriteNumbers.[1].Int32" 
+                T.Code = "IntIsGreaterThan"
+            }
+            { 
+                T.Message = "Must be greater than '3'"
+                T.Property = "FavouriteNumbers.[4].Int32"
+                T.Code = "IntIsGreaterThan"
+            }
+        ],
+        vUser user2)
+
+        
