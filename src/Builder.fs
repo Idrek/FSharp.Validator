@@ -66,6 +66,23 @@ type ValidatorBuilder<'t> () =
                         }]
                     | Some p -> rule property p))
         } :: state
+
+    [<CustomOperation("validateOptional")>]
+    member this.ValidateOptional
+            (
+                state: list<T.State<'t>>,
+                property: string,
+                getProperty: 't -> Option<'p>,
+                rules: list<string -> 'p -> T.Validation>
+            ) : list<T.State<'t>> =
+        {
+            Predicate = fun _ -> true
+            Rules = rules |> List.map (fun rule ->
+                (fun v ->
+                    match getProperty v with
+                    | None -> Ok ()
+                    | Some p -> rule property p))
+        } :: state
         
 
  
