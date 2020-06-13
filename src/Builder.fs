@@ -103,7 +103,7 @@ type ValidatorBuilder<'t> () =
                 |> List.map (fun validated -> 
                     match validated with 
                     | Ok () -> Set.empty 
-                    | Error failure -> failure)
+                    | Error invalid -> invalid)
                 |> Set.unionMany 
             match Set.isEmpty invalids with
             | true -> Ok ()

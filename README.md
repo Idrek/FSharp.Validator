@@ -38,36 +38,36 @@ module T = Validator.Types
 type DateTimeOffset = System.DateTimeOffset
 
 let isSleepTime (property: string) : DateTimeOffset -> T.Validation =
-    let failure : T.Failure = {
+    let invalid : T.Invalid = {
         Message = "Must be sleep time"
         Property = property
         Code = "IsSleepTime" 
     }
-    V.withFunction failure (fun (target: DateTimeOffset) -> target.Hour >= 23 || target.Hour <= 8)
+    V.withFunction invalid (fun (target: DateTimeOffset) -> target.Hour >= 23 || target.Hour <= 8)
 
 let intIsBetweenInclusive (valueFrom: int, valueTo: int) (property: string) : int -> T.Validation =
-    let failure : T.Failure = {
+    let invalid : T.Invalid = {
         Message = sprintf "Must be between '%O' and '%O' (inclusive)" valueFrom valueTo
         Property = property
         Code = "IntIsBetweenInclusive" 
     }
-    V.withFunction failure (fun (target: int) -> target >= valueFrom && target <= valueTo)
+    V.withFunction invalid (fun (target: int) -> target >= valueFrom && target <= valueTo)
 
 let listIsNotEmpty (property: string) : list<'a> -> T.Validation =
-    let failure : T.Failure = {
+    let invalid : T.Invalid = {
         Message = "Must not be empty list"
         Property = property
         Code = "ListIsNotEmpty"
     }
-    V.withFunction failure (List.isEmpty >> not)
+    V.withFunction invalid (List.isEmpty >> not)
 
 let isSuperset (value: Set<'a>) (property: string) : Set<'a> -> T.Validation =
-    let failure : T.Failure = {
+    let invalid : T.Invalid = {
         Message = sprintf "Set must contain '%O'" value
         Property = property
         Code = "IsSuperset"
     }
-    V.withFunction failure (fun (target: Set<'a>) -> Set.isSuperset target value)
+    V.withFunction invalid (fun (target: Set<'a>) -> Set.isSuperset target value)
 ```
 - Program.fs
 
@@ -179,5 +179,5 @@ let eachWithValidator (validate: 't -> T.Validation) (property: string) (elems: 
 let withValidatorWhen (predicate: 't -> bool) (validate: 't -> T.Validation) (property: string) (elem: 't) : T.Validation
 
 // Create rule.
-let withFunction (failure: T.Failure) (f: 't -> bool) (elem: 't) : T.Validation
+let withFunction (invalid: T.Invalid) (f: 't -> bool) (elem: 't) : T.Validation
 ```
