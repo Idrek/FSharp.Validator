@@ -1,6 +1,6 @@
 # FSharp.Validator
 
-Library to validate .NET and F# data types.
+Library to validate .NET and F# data types (it's strictly based in [AccidentalFish.FSharp.Validation](https://github.com/JamesRandall/AccidentalFish.FSharp.Validation)).
 
 ## Installation
 
