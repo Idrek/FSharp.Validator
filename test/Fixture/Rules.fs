@@ -22,3 +22,11 @@ let intIsGreaterThan (value: int) (property: string) : int -> T.Validation =
     }
     withFunction invalid (fun (target: int) -> target > value)
 
+let intIsGreaterOrEqualTo (value: int) (property: string) : int -> T.Validation =
+    let invalid : T.Invalid = {
+        Message = sprintf "Must be greater or equal to '%O'" value
+        Property = property
+        Code = "IntIsGreaterOrEqualTo"
+    }
+    withFunction invalid (fun (target: int) -> target >= value)
+
