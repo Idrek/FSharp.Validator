@@ -2,6 +2,7 @@ module ValidatorTest.Fixture.Rules
 
 open Validator.Api
 
+module FT = ValidatorTest.Fixture.Types
 module T = Validator.Types
 
 type String = System.String
@@ -69,4 +70,12 @@ let doubleIsGreaterThan (value: double) (property: string) : double -> T.Validat
         Code = "DoubleIsGreaterThan"
     }
     withFunction invalid (fun (target: double) -> target > value)
+
+let isColor (value: FT.TrafficLightColor) (property: string) : FT.TrafficLightColor -> T.Validation =
+    let invalid : T.Invalid = {
+        Message = sprintf "Color is not '%O'" value
+        Property = property
+        Code = "IsColor"
+    }
+    withFunction invalid (fun (target: FT.TrafficLightColor) -> target = value)
 
