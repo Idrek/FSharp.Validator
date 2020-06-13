@@ -8,3 +8,8 @@ type Invalid = {
 
 type Validation = Result<unit, Set<Invalid>>
 
+type State<'a> = {
+    Predicate: 'a -> bool
+    Rules: list<'a -> Validation>
+}
+
