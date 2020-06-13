@@ -487,4 +487,31 @@ let ``Test builder's validation functions for TrafficLightColor type`` () =
         vLight { Color = FT.Amber })
     Assert.Equal<T.Validation>(Ok (), vLight { Color = FT.Green })
 
-    
+[<Fact>]
+let ``Test builder's validateRequired method`` () =
+    let vCommunication = validator<FT.Communication>() {
+        validateRequired "Message" (fun communication -> communication.Message) [
+            FR.stringHasMaxLengthOf 10
+        ]
+    }
+    Assert.Equal<T.Validation>(Ok (), vCommunication { Size = 4; Message = Some "one two" })
+    Assert.Equal<T.Validation>(
+        Error <| Set [
+            { 
+                T.Message = "Must has max length of '10'"
+                T.Property = "Message"
+                T.Code = "StringHasMaxLengthOf" 
+            }
+        ],
+        vCommunication { Size = 4; Message = Some "one two three" })
+    Assert.Equal<T.Validation>(
+        Error <| Set [
+            { 
+                T.Message = "Required value in 'Option' type"
+                T.Property = "Message"
+                T.Code = "RequiredOption" 
+            }
+        ],
+        vCommunication { Size = 4; Message = None })
+
+        
