@@ -88,3 +88,44 @@ let ``Test withValidatorWhen function`` () =
             "Country"
             "spain")
 
+[<Fact>]
+let ``Test eachWithValidator function over a list`` () =
+    let invalid : T.Invalid = {
+        Message = "Message 1"
+        Property = "Property1"
+        Code = "Code1"
+    }
+
+    Assert.Equal<T.Validation>(
+        Ok (),
+        eachWithValidator  
+            (fun (s: string) -> if s.StartsWith "ja" then Ok () else Error <| Set [invalid]) 
+            "Country"
+            ["japan"; "jamaica"])
+
+    let error1 : T.Invalid = {
+        Message = "Message 1"
+        Property = "Country.[1].Property1"
+        Code = "Code1"
+    }
+    let error2 : T.Invalid = {
+        Message = "Message 1"
+        Property = "Country.[2].Property1"
+        Code = "Code1"
+    }
+
+    Assert.Equal<T.Validation>(
+        Error <| Set [error1],
+        eachWithValidator  
+            (fun (s: string) -> if s.StartsWith "ja" then Ok () else Error <| Set [invalid]) 
+            "Country"
+            ["japan"; "france"; "jamaica"])
+
+    Assert.Equal<T.Validation>(
+        Error <| Set [error1; error2],
+        eachWithValidator  
+            (fun (s: string) -> if s.StartsWith "ja" then Ok () else Error <| Set [invalid]) 
+            "Country"
+            ["japan"; "france"; "spain"])
+
+
