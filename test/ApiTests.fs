@@ -3,6 +3,8 @@ module ValidatorTest.ApiTests
 open Validator.Api
 open Xunit
 
+module FT = ValidatorTest.Fixture.Types
+module FR = ValidatorTest.Fixture.Rules
 module T = Validator.Types
 
 type String = System.String
@@ -208,4 +210,35 @@ let ``Test eachWithValidator function over a sequence`` () =
             "Country"
             (seq ["japan"; "france"; "spain"]))
 
+[<Fact>]
+let ``Test builder's validateWith + withValidator function`` () =
+    let vAddress = validator<FT.Address>() {
+        validateWith "Street" (fun address -> address.Street) [
+            FR.stringStartsWith "Castle"
+        ]
+    }
+    let vUser = validator<FT.User1>() {
+        validateWith "Address" (fun user -> user.Address) [
+            (withValidator vAddress)
+        ]
+    }
+
+    let user : FT.User1 = {
+        Name = "John"
+        Age = 32
+        Address = { Street = "Castle Lane"; Number = 54 }
+    }
+    Assert.Equal<T.Validation>(Ok (), vUser user)
+
+    let user : FT.User1 = {
+        Name = "John"
+        Age = 32
+        Address = { Street = "Lane Castle"; Number = 54 }
+    }
+    let error : T.Validation = Error <| Set [{
+        T.Message = "Must start with 'Castle'"
+        T.Property = "Address.Street"
+        T.Code = "StringStartsWith"
+    }]
+    Assert.Equal<T.Validation>(error, vUser user)
 
