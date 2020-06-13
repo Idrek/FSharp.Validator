@@ -87,4 +87,11 @@ let isMyTriple (i: int, s: string, b: bool) (property: string) : int * string * 
     }
     withFunction invalid (fun (i2, s2, b2) -> i = i2 && s = s2 && b = b2)
 
-    
+let isMyFavouriteColor (value: FT.Color) (property: string) : FT.Color -> T.Validation =
+    let invalid : T.Invalid = {
+        Message = "Not my favourite color"
+        Property = property
+        Code = "IsMyFavouriteColor"
+    }
+    withFunction invalid (fun (target: FT.Color) -> target = value)
+
