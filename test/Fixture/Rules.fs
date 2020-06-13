@@ -54,3 +54,11 @@ let stringHasMaxLengthOf (value: int) (property: string) : string -> T.Validatio
     }
     withFunction invalid (fun (target: string) -> target.Length <= value)
 
+let listIsNotEmpty (property: string) : list<'a> -> T.Validation =
+    let invalid : T.Invalid = {
+        Message = "Must not be empty list"
+        Property = property
+        Code = "ListIsNotEmpty"
+    }
+    withFunction invalid (List.isEmpty >> not)
+
