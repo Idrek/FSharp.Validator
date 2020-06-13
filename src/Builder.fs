@@ -93,6 +93,22 @@ type ValidatorBuilder<'t> () =
                 rules: list<string -> 'p -> T.Validation>
             ) : list<T.State<'t>> =
         this.ValidateOptional(state, property, getProperty, rules)
+
+    member this.Run (state: list<T.State<'t>>) : 't -> T.Validation =
+        let execute (t: 't) : T.Validation =
+            let invalids : Set<T.Invalid> = 
+                state
+                |> List.filter (fun state -> state.Predicate t)
+                |> List.collect (fun state -> List.map (fun v -> v t) state.Rules)
+                |> List.map (fun validated -> 
+                    match validated with 
+                    | Ok () -> Set.empty 
+                    | Error failure -> failure)
+                |> Set.unionMany 
+            match Set.isEmpty invalids with
+            | true -> Ok ()
+            | false -> Error invalids
+        execute
         
 
  
