@@ -55,3 +55,8 @@ let withValidatorWhen
             |> Error
     else Ok ()
 
+let withFunction (invalid: T.Invalid) (f: 't -> bool) (elem: 't) : T.Validation =
+    match f elem with
+    | true -> Ok ()
+    | false -> Error <| Set [invalid]
+
