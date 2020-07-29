@@ -4,16 +4,10 @@ Library to validate .NET and F# data types (it's strictly based in [AccidentalFi
 
 ## Installation
 
-It's not uploaded to Nuget yet, so follow the process to create a local package from this repository:
+From [Nuget](https://www.nuget.org/packages/FSharp.Validator/):
 
 ```
-$ git clone https://github.com/Idrek/FSharp.Validator FSharp.Validator && cd $_
-$ dotnet pack src/Validator.fsproj
-$ mkdir /tmp/nuget
-$ nuget add src/bin/Debug/FSharp.Validator.0.0.1.nupkg -Source $_
-$ ## Create new `Demo` project and add the local installed library.
-$ cd /tmp && dotnet new console --language F# --name Demo && cd $_
-$ dotnet add Demo.fsproj package FSharp.Validator --source /tmp/nuget/ --version 0.0.1
+dotnet add package FSharp.Validator --version 0.0.1
 ```
 
 ## Usage
